@@ -126,6 +126,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
         backRight.setState(backRightState);
         backLeft.setState(backLeftState);
 
+        frontRight.putRotationSmartDashboard();
+        frontLeft.putRotationSmartDashboard();
+        backRight.putRotationSmartDashboard();
+        backLeft.putRotationSmartDashboard();
+
         frontRight.putRawRotationSmartDashboard();
         frontLeft.putRawRotationSmartDashboard();
         backRight.putRawRotationSmartDashboard();

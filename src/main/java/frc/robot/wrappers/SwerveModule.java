@@ -174,6 +174,10 @@ public class SwerveModule {
         SmartDashboard.putNumber("CANCoder " + getID() + " Raw Rotation", getRawRotationAbsolute());
     }
 
+    public void putRotationSmartDashboard() {
+        SmartDashboard.putNumber("CANCoder " + getID() + " Rotation", getRotationAbsolute());
+    }
+
     /* Odometry */
     public void updateOdometry(){
         this.pDriveAngle = this.driveAngle;
