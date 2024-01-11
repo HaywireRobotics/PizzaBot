@@ -67,8 +67,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
                                         Constants.BACK_LEFT_MODULE_STEER_ENCODER, Constants.BACK_LEFT_MODULE_STEER_OFFSET,
                                         Constants.BACK_LEFT_REVERSE_DRIVE);
     
-        // frontRight is a problem child and wants to have its own PID values :(
-        // this.frontRight.setRotationPID(0.002, 0.000, 0.00001);
+        // frontLeft is a problem child and wants to have its own PID values :(
+        // this.frontLeft.setRotationPID(0.002, 0.000, 0.00001);
         
     }
 

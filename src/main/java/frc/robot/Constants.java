@@ -32,26 +32,26 @@ public final class Constants {
     // OFFSET values changed on 1/14/23 to fix widebot conumdrum
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2;
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 1;
-    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 11; 
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 68.39;
+    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 12; 
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 159.3;
     public static final boolean FRONT_LEFT_REVERSE_DRIVE = true;
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 4;
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 3;
     public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 13;
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = 159.82; 
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = 159.4; 
     public static final boolean FRONT_RIGHT_REVERSE_DRIVE = true;
 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 8; 
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 7; 
-    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 12; 
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = 183.2; 
+    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 11; 
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = 159.0; 
     public static final boolean BACK_LEFT_REVERSE_DRIVE = true;
 
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 5; 
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 6; 
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 14;
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 326.01;
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 146.4;
     public static final boolean BACK_RIGHT_REVERSE_DRIVE = false;
 
     public static final double STEER_MOTOR_GEAR_RATIO = 12.8 / 1;
