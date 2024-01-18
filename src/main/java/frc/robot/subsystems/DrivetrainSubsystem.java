@@ -46,8 +46,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     
     private Vector deltaTranslation = new Vector();
     private Vector translation = new Vector();
-    private double heading = 0.;
-    private double headingOffset = 0.;
+    private double heading = 0.0;
+    private double headingOffset = 0.0;
 
     // used to tell when we are aligning with an AprilTag
     public boolean aligning = false;
@@ -105,8 +105,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         headingOffset = x;
     }
 
+    public void zeroHeading() {
+        headingOffset = navx.getYaw();
+    }
+
     public double getNavx() {
-        return -m_gyro.getAngle() + headingOffset;
+        // return -m_gyro.getAngle() + headingOffset;
+        return -navx.getYaw() + headingOffset;
     }
 
     public double getGyroRoll() {
@@ -135,6 +140,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         frontLeft.putRawRotationSmartDashboard();
         backRight.putRawRotationSmartDashboard();
         backLeft.putRawRotationSmartDashboard();
+
+        SmartDashboard.putNumber("Gyro", navx.getAngle());
+        SmartDashboard.putNumber("Yaw", navx.getYaw());
+        SmartDashboard.putNumber("Compass", navx.getCompassHeading());
     }
 
     public void driveVector(double speed, double direction, double aSpeed, boolean fieldCentric) {
@@ -201,7 +210,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
             // }
         }
 
-        if (!field_centric_drive) {
+        if (field_centric_drive) {
             driveAngle -= getNavx();
         }
 
@@ -270,7 +279,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // System.out.println("FR_V: "+frontLeftVelocity.toString());
         
         heading = this.getNavx();
-        SmartDashboard.putNumber("Gyro", getNavx());
+        // SmartDashboard.putNumber("Gyro", getNavx());
         // System.out.println(this.getGyro());
 
         deltaTranslation = calculateDeltaPosition();

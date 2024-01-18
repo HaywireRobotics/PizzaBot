@@ -11,6 +11,7 @@ import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -45,7 +46,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-
+    m_controller.y().onTrue(new InstantCommand(m_drivetrainSubsystem::toggleFieldCentricDrive));
+    m_controller.a().onTrue(new InstantCommand(m_drivetrainSubsystem::zeroHeading));
   }
 
   public void disable() {
