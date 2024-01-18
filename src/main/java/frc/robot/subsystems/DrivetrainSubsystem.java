@@ -48,6 +48,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private Vector translation = new Vector();
     private double heading = 0.0;
     private double headingOffset = 0.0;
+    private double compassOffset = 0.0;
 
     // used to tell when we are aligning with an AprilTag
     public boolean aligning = false;
@@ -111,7 +112,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public double getNavx() {
         // return -m_gyro.getAngle() + headingOffset;
-        return -navx.getYaw() + headingOffset;
+        return -navx.getYaw() + headingOffset + compassOffset;
     }
 
     public double getGyroRoll() {
@@ -342,6 +343,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
         backRight.disable();
     }
     public void enable(){
+        compassOffset = navx.getCompassHeading();
+
         frontLeft.enable();
         frontRight.enable();
         backLeft.enable();
