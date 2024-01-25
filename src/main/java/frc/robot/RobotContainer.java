@@ -48,6 +48,9 @@ public class RobotContainer {
   private void configureBindings() {
     m_controller.y().onTrue(new InstantCommand(m_drivetrainSubsystem::toggleFieldCentricDrive));
     m_controller.a().onTrue(new InstantCommand(m_drivetrainSubsystem::zeroHeading));
+
+    m_controller.leftTrigger().onTrue(new InstantCommand(() -> {m_drivetrainSubsystem.incrementDriveSpeed(-100);}));
+    m_controller.leftBumper().onTrue(new InstantCommand(() -> {m_drivetrainSubsystem.incrementDriveSpeed(100);}));
   }
 
   public void disable() {

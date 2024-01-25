@@ -50,6 +50,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private double headingOffset = 0.0;
     private double compassOffset = 0.0;
 
+    private double currentDriveSpeed = Constants.MAX_DRIVE_SPEED;
+
     // used to tell when we are aligning with an AprilTag
     public boolean aligning = false;
     public boolean aligned = false;
@@ -121,6 +123,24 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public Vector getGyroHorizontalG(){
         return new Vector(navx.getRawAccelX()-navx.getWorldLinearAccelX(), navx.getRawAccelY()-navx.getWorldLinearAccelY());
     }
+
+    public void setCurrentDriveSpeed(double speed) {
+        if (speed > 0 && speed < Constants.MAX_DRIVE_SPEED) {
+            currentDriveSpeed = speed;
+        }
+    }
+    
+    public void incrementDriveSpeed(double increment) {
+        if (increment > 0) {
+            if (increment < Constants.MAX_DRIVE_SPEED - currentDriveSpeed) {
+                currentDriveSpeed += increment;
+            }
+        } else {
+            if (increment > currentDriveSpeed) {
+                currentDriveSpeed += increment;
+            }
+        }
+    }
     
     // public Command flipGyroCommand() {
     //     return new InstantCommand(() -> {setGyroOffset(180);});
@@ -148,7 +168,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void driveVector(double speed, double direction, double aSpeed, boolean fieldCentric) {
-        double driveSpeed = speed * Constants.MAX_SPEED;
+        double driveSpeed = speed * currentDriveSpeed;
         double driveAngle = direction + (fieldCentric ? getNavx() : 0);  // field-centric
 
         SwerveModuleState frontLeftDrive = new SwerveModuleState(driveSpeed, Rotation2d.fromDegrees(driveAngle));
@@ -156,7 +176,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         SwerveModuleState backLeftDrive = new SwerveModuleState(driveSpeed, Rotation2d.fromDegrees(driveAngle));
         SwerveModuleState backRightDrive = new SwerveModuleState(driveSpeed, Rotation2d.fromDegrees(driveAngle));
         
-        double rotateSpeed = Constants.MAX_SPEED * aSpeed;
+        double rotateSpeed = Constants.MAX_STEER_SPEED * aSpeed;
 
         // different signs accounts for orientation of modules
         SwerveModuleState frontLeftRotate =  new SwerveModuleState(-rotateSpeed, Rotation2d.fromDegrees( Constants.DRIVE_THETA_OFFSET));
@@ -185,7 +205,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public void driveVectorMetersPerSecond(double speed, double direction, double aSpeed) {
         double rpm = speed / Constants.WHEEL_DIAMETER;
-        driveVector(rpm/Constants.MAX_SPEED, direction, aSpeed);
+        driveVector(rpm/currentDriveSpeed, direction, aSpeed);
     }
 
     public void driveXY(double xSpeed, double ySpeed, double aSpeed) {
