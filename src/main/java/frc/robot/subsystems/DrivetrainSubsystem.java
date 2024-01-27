@@ -173,7 +173,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void driveVector(double speed, double direction, double aSpeed, boolean fieldCentric) {
-        double driveSpeed = speed * currentDriveSpeed;
+        double driveSpeed = speed;
         double driveAngle = direction + (fieldCentric ? getNavx() : 0);  // field-centric
 
         SwerveModuleState frontLeftDrive = new SwerveModuleState(driveSpeed, Rotation2d.fromDegrees(driveAngle));
@@ -209,14 +209,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
     }
 
     public void driveVectorMetersPerSecond(double speed, double direction, double aSpeed) {
-        double rpm = speed / Constants.WHEEL_DIAMETER;
-        driveVector(rpm/currentDriveSpeed, direction, aSpeed);
+        double rpm = Statics.metersPerSecondToRPM(speed);
+        driveVector(rpm, direction, aSpeed);
     }
 
     public void driveXY(double xSpeed, double ySpeed, double aSpeed) {
-        double speed = Math.sqrt(xSpeed*xSpeed + ySpeed*ySpeed);
+        double rpm = Math.sqrt(xSpeed*xSpeed + ySpeed*ySpeed) * currentDriveSpeed;
         double direction = Math.toDegrees(Math.atan2(ySpeed, xSpeed));
-        driveVector(speed, direction, aSpeed);
+        driveVector(rpm, direction, aSpeed);
     }
 
     public void driveArcade(double xSpeed, double ySpeed, double aSpeed){
@@ -240,9 +240,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
             driveAngle -= getNavx();
         }
 
-        double speed = Math.abs(Math.hypot(xSpeed, ySpeed));
+        double rpm = Math.abs(Math.hypot(xSpeed, ySpeed)) * currentDriveSpeed;
 
-        driveVector(speed, driveAngle, aSpeed);
+        driveVector(rpm, driveAngle, aSpeed);
     }
 
     public void lockDrive(){

@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.util.Statics;
 import frc.robot.util.Vector;
 
 public class SwerveModule {
@@ -113,7 +114,8 @@ public class SwerveModule {
 
     public double getSpeedMetersPerSecond() {
         // return ((driveMotor.getVelocity() / 60) / 6.75) * (Constants.WHEEL_DIAMETER * Math.PI);
-        return (driveMotor.getVelocity() / Constants.DRIVE_MOTOR_GEAR_RATIO) * (Constants.WHEEL_DIAMETER * Math.PI);
+        // return (driveMotor.getVelocity() / Constants.DRIVE_MOTOR_GEAR_RATIO) * (Constants.WHEEL_DIAMETER * Math.PI);
+        return Statics.rpmToMetersPerSecond(driveMotor.getVelocity());
     }
 
     public double getRotationAbsolute() {

@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import frc.robot.Constants;
 
 public final class Statics {
     public static double clamp(double value, double min, double max){
@@ -81,5 +82,13 @@ public final class Statics {
     {
         double diff = ( angle2 - angle1 + 180 ) % 360 - 180;
         return diff < -180 ? diff + 360 : diff;
+    }
+
+    public static double rpmToMetersPerSecond(double rpm) {
+        return (rpm / Constants.DRIVE_MOTOR_GEAR_RATIO) * (Constants.WHEEL_DIAMETER * Math.PI);
+    }
+
+    public static double metersPerSecondToRPM(double metersPerSecond) {
+        return (metersPerSecond / (Constants.WHEEL_DIAMETER * Math.PI)) * Constants.DRIVE_MOTOR_GEAR_RATIO;
     }
 }
