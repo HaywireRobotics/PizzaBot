@@ -50,7 +50,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private double headingOffset = 0.0;
     private double compassOffset = 0.0;
 
-    private double currentDriveSpeed = Constants.MAX_DRIVE_SPEED;
+    private double currentDriveSpeed = Constants.MAX_SPEED;
 
     // used to tell when we are aligning with an AprilTag
     public boolean aligning = false;
@@ -124,19 +124,19 @@ public class DrivetrainSubsystem extends SubsystemBase {
         return new Vector(navx.getRawAccelX()-navx.getWorldLinearAccelX(), navx.getRawAccelY()-navx.getWorldLinearAccelY());
     }
 
-    public void setCurrentDriveSpeed(double speed) {
-        if (speed > 0 && speed < Constants.MAX_DRIVE_SPEED) {
+    public void setDriveSpeed(double speed) {
+        if (speed > 0 && speed < Constants.MAX_SPEED) {
             currentDriveSpeed = speed;
         }
     }
-    
+
     public void incrementDriveSpeed(double increment) {
         if (increment > 0) {
-            if (increment < Constants.MAX_DRIVE_SPEED - currentDriveSpeed) {
+            if (increment < Constants.MAX_SPEED - currentDriveSpeed) {
                 currentDriveSpeed += increment;
             }
         } else {
-            if (increment > currentDriveSpeed) {
+            if (Math.abs(increment) < currentDriveSpeed) {
                 currentDriveSpeed += increment;
             }
         }
@@ -176,7 +176,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         SwerveModuleState backLeftDrive = new SwerveModuleState(driveSpeed, Rotation2d.fromDegrees(driveAngle));
         SwerveModuleState backRightDrive = new SwerveModuleState(driveSpeed, Rotation2d.fromDegrees(driveAngle));
         
-        double rotateSpeed = Constants.MAX_STEER_SPEED * aSpeed;
+        double rotateSpeed = currentDriveSpeed * aSpeed;
 
         // different signs accounts for orientation of modules
         SwerveModuleState frontLeftRotate =  new SwerveModuleState(-rotateSpeed, Rotation2d.fromDegrees( Constants.DRIVE_THETA_OFFSET));

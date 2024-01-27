@@ -28,8 +28,8 @@ public final class Constants {
      */
     // public static final double DRIVETRAIN_WHEELBASE_METERS = 0.48895;
 
-    public static final int MAX_DRIVE_SPEED = 1000;
-    public static final int MAX_STEER_SPEED = 3000;
+    public static final int MAX_SPEED = 1000;
+
     // OFFSET values changed on 1/14/23 to fix widebot conumdrum
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2;
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 1;

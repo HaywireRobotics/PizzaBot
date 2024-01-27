@@ -85,11 +85,8 @@ public class SwerveModule {
         state = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(getRotationAbsolute()));
 
         desiredState = state;
-        // System.out.println(state.speedMetersPerSecond);
 
-        // driveMotor.setVelocity(state.speedMetersPerSecond / (WHEEL_DIAMETER * Math.PI));
-        // rotationMotor.setPosition(state.angle.getDegrees());
-        if( isEnabled() ){
+        if ( isEnabled() ){
             double driveCalc = driveController.calculate(this.getSpeedMetersPerSecond(), state.speedMetersPerSecond / (Constants.WHEEL_DIAMETER * Math.PI));
 
             // If drive is stoped, hold last angle.
@@ -97,10 +94,6 @@ public class SwerveModule {
             double rotationTarget = this.getRotation() + angleDifference(this.getRotation(), stateAngle);
                 
             double rotateCalc = rotationController.calculate(this.getRotation(), rotationTarget);
-            // if (this.printCount == 0) {
-                // System.out.println(rotationMotor.getID() + "RotateCalc: " + rotateCalc + "\t" + this.getRotation() + "\t" + state.angle.getDegrees() + "\t" + encoderOffset);
-            //     this.printCount = 1000;
-            // };
 
             if (Math.abs(driveCalc) <= 0.01 && Math.abs(rotateCalc) <= 0.01) {
                 zeroEncoders();

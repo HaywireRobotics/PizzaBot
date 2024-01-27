@@ -4,11 +4,13 @@
 
 package frc.robot;
 
-import frc.robot.commands.Autos;
+import frc.robot.commands.AutoDriveState;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -49,8 +51,11 @@ public class RobotContainer {
     m_controller.y().onTrue(new InstantCommand(m_drivetrainSubsystem::toggleFieldCentricDrive));
     m_controller.a().onTrue(new InstantCommand(m_drivetrainSubsystem::zeroHeading));
 
-    m_controller.leftTrigger().onTrue(new InstantCommand(() -> {m_drivetrainSubsystem.incrementDriveSpeed(-100);}));
-    m_controller.leftBumper().onTrue(new InstantCommand(() -> {m_drivetrainSubsystem.incrementDriveSpeed(100);}));
+    m_controller.leftBumper().onTrue(new InstantCommand(() -> { m_drivetrainSubsystem.incrementDriveSpeed(100); }));
+    m_controller.leftTrigger().onTrue(new InstantCommand(() -> { m_drivetrainSubsystem.incrementDriveSpeed(-100); }));
+
+    m_controller.b().onTrue(new InstantCommand(() -> { m_drivetrainSubsystem.setDriveSpeed(537); }));
+    m_controller.x().onTrue(new InstantCommand(() -> { m_drivetrainSubsystem.setDriveSpeed(953); }));
   }
 
   public void disable() {
@@ -67,6 +72,11 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new InstantCommand();
+    m_drivetrainSubsystem.enable();
+    return new AutoDriveState(
+      m_drivetrainSubsystem, 
+      new SwerveModuleState(537, Rotation2d.fromDegrees(180.0))
+    ).withTimeout(3);
+    // return m_drivetrainSubsystem.driveVectorCommand(537, 0.0, 0, false).withTimeout(3);
   }
 }
