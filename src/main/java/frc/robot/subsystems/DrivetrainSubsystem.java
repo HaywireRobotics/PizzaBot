@@ -162,6 +162,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
         backRight.putRawRotationSmartDashboard();
         backLeft.putRawRotationSmartDashboard();
 
+        frontRight.putSpeedSmartDashboard();
+        frontLeft.putSpeedSmartDashboard();
+        backRight.putSpeedSmartDashboard();
+        backLeft.putSpeedSmartDashboard();
+
         SmartDashboard.putNumber("Gyro", navx.getAngle());
         SmartDashboard.putNumber("Yaw", navx.getYaw());
         SmartDashboard.putNumber("Compass", navx.getCompassHeading());

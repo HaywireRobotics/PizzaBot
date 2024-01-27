@@ -34,7 +34,7 @@ public final class Constants {
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 2;
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 1;
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 12; 
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 159.3;
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = 169;
     public static final boolean FRONT_LEFT_REVERSE_DRIVE = true;
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 4;
@@ -52,7 +52,7 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 5; 
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 6; 
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 14;
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 146.4;
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = 144;
     public static final boolean BACK_RIGHT_REVERSE_DRIVE = false;
 
     public static final double STEER_MOTOR_GEAR_RATIO = 12.8 / 1;

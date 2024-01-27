@@ -71,12 +71,11 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
     m_drivetrainSubsystem.enable();
+
     return new AutoDriveState(
       m_drivetrainSubsystem, 
       new SwerveModuleState(537, Rotation2d.fromDegrees(180.0))
-    ).withTimeout(3);
-    // return m_drivetrainSubsystem.driveVectorCommand(537, 0.0, 0, false).withTimeout(3);
+    ).withTimeout(7);
   }
 }

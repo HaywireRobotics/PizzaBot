@@ -171,6 +171,10 @@ public class SwerveModule {
         SmartDashboard.putNumber("CANCoder " + getID() + " Rotation", getRotationAbsolute());
     }
 
+    public void putSpeedSmartDashboard() {
+        SmartDashboard.putNumber("Module " + getID() + " Speed", Math.abs(getSpeedMetersPerSecond()));
+    }
+
     /* Odometry */
     public void updateOdometry(){
         this.pDriveAngle = this.driveAngle;
