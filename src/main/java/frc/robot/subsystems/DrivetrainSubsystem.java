@@ -252,6 +252,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         setFrontRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)));
     }
 
+    public void restDrive(){
+        setBackLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(0.0)));
+        setBackRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(0.0)));
+        setFrontLeft(new SwerveModuleState(0.0, Rotation2d.fromDegrees(0.0)));
+        setFrontRight(new SwerveModuleState(0.0, Rotation2d.fromDegrees(0.0)));
+    }
+
     public boolean toggleFieldCentricDrive() {
         field_centric_drive = !field_centric_drive;
         return field_centric_drive;

@@ -5,10 +5,15 @@
 package frc.robot;
 
 import frc.robot.commands.AutoDriveState;
+import frc.robot.commands.AutoFollowAprilTag;
 import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
+
+import org.photonvision.PhotonCamera;
+import org.photonvision.common.hardware.VisionLEDMode;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,13 +31,19 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
 
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
+
   private final CommandXboxController m_controller = new CommandXboxController(0);
+
+  private final PhotonCamera m_camera = new PhotonCamera("banana");
+  // public final Camera m_limelightBanana = new Camera(m_networkTable, "OV5647", Constants.BANANA_POSE);
 
   public final DefaultDriveCommand defaultDriveCommand;
 
   public RobotContainer() {
     defaultDriveCommand = new DefaultDriveCommand(m_drivetrainSubsystem, m_controller);
     m_drivetrainSubsystem.setDefaultCommand(defaultDriveCommand);
+
+    m_camera.setLED(VisionLEDMode.kOff);
 
     // Configure the trigger bindings
     configureBindings();
@@ -73,9 +84,11 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     m_drivetrainSubsystem.enable();
 
-    return new AutoDriveState(
-      m_drivetrainSubsystem, 
-      new SwerveModuleState(537, Rotation2d.fromDegrees(180.0))
-    ).withTimeout(7);
+    // return new AutoDriveState(
+    //   m_drivetrainSubsystem, 
+    //   new SwerveModuleState(537, Rotation2d.fromDegrees(180.0))
+    // ).withTimeout(7);
+
+    return new AutoFollowAprilTag(m_drivetrainSubsystem, m_camera);
   }
 }
