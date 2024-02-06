@@ -41,6 +41,7 @@ public class AutoFollowAprilTag extends CommandBase {
             TargetCorner center = this.centerOfCorners(corners);
 
             SmartDashboard.putNumberArray("center", new double[]{center.x, center.y});
+            
         }
     }
 
