@@ -147,10 +147,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // }
 
     public void periodic() {
-        frontRight.setState(frontRightState);
-        frontLeft.setState(frontLeftState);
-        backRight.setState(backRightState);
-        backLeft.setState(backLeftState);
+        frontRight.setStateRPM(frontRightState);
+        frontLeft.setStateRPM(frontLeftState);
+        backRight.setStateRPM(backRightState);
+        backLeft.setStateRPM(backLeftState);
 
         frontRight.putRotationSmartDashboard();
         frontLeft.putRotationSmartDashboard();

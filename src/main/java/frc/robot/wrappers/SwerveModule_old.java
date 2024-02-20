@@ -4,6 +4,9 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 
+// import com.ctre.phoenix6.sensors.AbsoluteSensorRange;
+// import com.ctre.phoenix6.sensors.AbsoluteSensorRange;
+// import com.ctre.phoenix5.sensors.CANcoder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -12,31 +15,28 @@ import frc.robot.Constants;
 import frc.robot.util.Statics;
 import frc.robot.util.Vector;
 
-public class SwerveModule {
+public class SwerveModule_old {
 
-    private double INTEGRATOR_RANGE = 0.01;
-    private double ROTATION_KP = 0.00005; // 0.0048
-    private double ROTATION_KI = 0.00; //0.0025
-    private double ROTATION_KD = 0.0000; //0.00001
-    private double ROTATION_KIZ = this.INTEGRATOR_RANGE;
+    private double ROTATION_KP = 0.0048; // 0.003
+    private double ROTATION_KI = 0.0025; //0.00  // 0.0015
+    private double ROTATION_KD = 0.00001;
+    private double ROTATION_KIZ = 0;
     private double ROTATION_KFF = 0;
+    private double INTEGRATOR_RANGE = 0.01;
     private double DRIVE_KP = 0.00007; //6.5e-5;
     private double DRIVE_KI = 0.0;  //5.5e-7;
     private double DRIVE_KD = 0.0; //0.001;
     private double DRIVE_KIZ = 0;
     private double DRIVE_KFF = 0;
 
-    private double ANGLE_KP = 0.00005; // 0.0048
-    private double ANGLE_KI = 0.00; //0.0025
-    private double ANGLE_KD = 0.0000; //0.00001
-    private double ANGLE_KIZ = this.INTEGRATOR_RANGE;
-    private double ANGLE_KFF = 0.0;
-    private PIDController angleController = new PIDController(ANGLE_KP, ANGLE_KI, ANGLE_KD);
-
     private boolean enabled = false;
 
     private final double OFFSET;
-    private double initialEncoderAngle = 0.0;
+    private double encoderOffset = 0;
+    private double encoderScale = -360/12.8;
+
+    private final PIDController rotationController = new PIDController(ROTATION_KP, ROTATION_KI, ROTATION_KD);
+    private final PIDController driveController = new PIDController(DRIVE_KP, DRIVE_KI, DRIVE_KD);
 
     private SwerveModuleState desiredState;
 
@@ -52,18 +52,22 @@ public class SwerveModule {
     private double pDriveAngle;
     private Vector deltaPosition = new Vector(0., 0.);
 
-    public SwerveModule(int driveID, int rotationID, int encoderID, double offset, boolean reverseDrive) {
+    public SwerveModule_old(int driveID, int rotationID, int encoderID, double offset, boolean reverseDrive) {
         this(new NEO(driveID, reverseDrive), new NEO(rotationID), new CANcoder(encoderID), offset);
     }
 
-    public SwerveModule(NEO driveMotor, NEO rotationMotor, CANcoder rotationEncoder, double offset) {
+    public SwerveModule_old(NEO driveMotor, NEO rotationMotor, CANcoder rotationEncoder, double offset) {
         this.rotationMotor = rotationMotor;
         this.driveMotor = driveMotor;
         this.rotationEncoder = rotationEncoder;
+
+        rotationController.setIntegratorRange(-INTEGRATOR_RANGE, INTEGRATOR_RANGE);
         
         this.driveMotor.configurePIDFF(DRIVE_KP, DRIVE_KI, DRIVE_KD, DRIVE_KIZ, DRIVE_KFF);
-        // this.rotationMotor.configurePIDFF(ROTATION_KP, ROTATION_KI, ROTATION_KD, ROTATION_KIZ, ROTATION_KFF);
+        this.rotationMotor.configurePIDFF(ROTATION_KP, ROTATION_KI, ROTATION_KD, ROTATION_KIZ, ROTATION_KFF);
 
+        // this.rotationEncoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
+        // rotationEncoder.getConfigurator().apply(AbsoluteSensorRangeValue.Unsigned_0To1);
         rotationEncoder.getConfigurator().apply(new MagnetSensorConfigs().withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1));
 
 
@@ -76,57 +80,39 @@ public class SwerveModule {
         ROTATION_KP = kp;
         ROTATION_KI = ki;
         ROTATION_KD = kd;
-        rotationMotor.configurePIDFF(ROTATION_KP, ROTATION_KI, ROTATION_KD, ROTATION_KIZ, ROTATION_KFF);
+        rotationController.setPID(kp, ki, kd);
     }
 
     public void setDrivePID(double kp, double ki, double kd) {
         DRIVE_KP = kp;
         DRIVE_KI = ki;
         DRIVE_KD = kd;
-        driveMotor.configurePIDFF(DRIVE_KP, DRIVE_KI, DRIVE_KD, DRIVE_KIZ, DRIVE_KFF);
+        driveController.setPID(kp, ki, kd);
     }
 
-    public void setStateRPM(SwerveModuleState state) {
-        desiredState = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(getRotationAbsolute()));
+    public void setState(SwerveModuleState state) {
+        state = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(getRotationAbsolute()));
+
+        desiredState = state;
 
         if ( isEnabled() ){
+            double driveCalc = driveController.calculate(this.getSpeedMetersPerSecond(), state.speedMetersPerSecond / (Constants.WHEEL_DIAMETER * Math.PI));
+
             // If drive is stoped, hold last angle.
-            double stateAngle = Double.isNaN(desiredState.angle.getDegrees()) ? pRotationAngle : desiredState.angle.getDegrees();
-            // double rotationTarget = this.getRotation() + angleDifference(this.getRotationAbsolute(), stateAngle);
-            double targetRotations = this.angleToSteerRotations(stateAngle + Math.round(this.steerRotationsToAngle(rotationMotor.getPosition()) / 360) * 360);
-            // rotationMotor.setPosition(this.angleToSteerRotations(stateAngle));
-            // rotationMotor.setPosition(targetRotations);
+            double stateAngle = Double.isNaN(state.angle.getDegrees()) ? pRotationAngle : state.angle.getDegrees();
+            double rotationTarget = this.getRotation() + angleDifference(this.getRotation(), stateAngle);
+                
+            double rotateCalc = rotationController.calculate(this.getRotation(), rotationTarget);
 
-            // PID would need to be tuned differently to reflect new method
-            // tries to make the error zero instead of shooting for a particular angle. Should help to avoid any
-            // of the problems between -180:180 and 0:360 that we've been running into by making it so that
-            // any pair of angles will go to a -180:180 error and thereafter be corrected.
-            double angleError = calculateError(this.getRotationAbsolute(), stateAngle);
-            double angleCalc = angleController.calculate(angleError, 0.0);
-            rotationMotor.set(angleCalc);
-
-            SmartDashboard.putNumber("AngleCalc"+rotationEncoder.getDeviceID(), angleError);
-            SmartDashboard.putNumber("AngleError"+rotationEncoder.getDeviceID(), angleError);
-            SmartDashboard.putNumber("DesiredStateAngle"+rotationEncoder.getDeviceID(), stateAngle);
-
-            // double rotationError = stateAngle - this.steerRotationsToAngle(rotationMotor.getPosition());
-            // SmartDashboard.putNumber("RotationError"+rotationEncoder.getDeviceID(), rotationError);
-            // double directionSmoothing = Math.cos(Math.toRadians(rotationError));
-            double directionSmoothing = 1.0;
-            driveMotor.setVelocity(desiredState.speedMetersPerSecond * directionSmoothing);
-        } else {
-            // rotationMotor.setVelocity(0.0);
-            // driveMotor.setVelocity(0.0);
-            rotationMotor.set(0.0);
-            driveMotor.set(0.0);
+            if (Math.abs(driveCalc) <= 0.01 && Math.abs(rotateCalc) <= 0.01) {
+                zeroEncoders();
+            }
+            driveMotor.set(driveCalc*Math.cos(Math.toRadians(rotationController.getPositionError())));
+            rotationMotor.set(-rotateCalc);
         }
+
         
         SmartDashboard.putNumber("SVAngle"+rotationEncoder.getDeviceID(), getRotation());
-    }
-    public void setStateMetersPerSecond(SwerveModuleState state) {
-        double metersPerSecond = Statics.rpmToMetersPerSecond(state.speedMetersPerSecond);
-        SwerveModuleState newState = new SwerveModuleState(metersPerSecond, state.angle);
-        this.setStateRPM(newState);
     }
 
     public void driveDirect(double driveSpeed, double rotationSpeed) {
@@ -135,6 +121,8 @@ public class SwerveModule {
     }
 
     public double getSpeedMetersPerSecond() {
+        // return ((driveMotor.getVelocity() / 60) / 6.75) * (Constants.WHEEL_DIAMETER * Math.PI);
+        // return (driveMotor.getVelocity() / Constants.DRIVE_MOTOR_GEAR_RATIO) * (Constants.WHEEL_DIAMETER * Math.PI);
         return Statics.rpmToMetersPerSecond(driveMotor.getVelocity());
     }
 
@@ -144,23 +132,18 @@ public class SwerveModule {
     public double getRawRotationAbsolute() {
         return rotationEncoder.getAbsolutePosition().getValueAsDouble() * 360;
     }
-    // public double getNeoRotation(){
-    //     return this.rotationMotor.getPosition()*encoderScale;
-    // }
+    public double getNeoRotation(){
+        return this.rotationMotor.getPosition()*encoderScale;
+    }
     public double getRotation() {
-        return this.steerRotationsToAngle(this.rotationMotor.getPosition());
-    }
-
-    public double angleToSteerRotations(double angle) {
-        return (angle - initialEncoderAngle / 360) * Constants.STEER_MOTOR_GEAR_RATIO;
-    }
-    public double steerRotationsToAngle(double rotations) {
-        return ((rotations / Constants.STEER_MOTOR_GEAR_RATIO) * 360 + initialEncoderAngle);
+        double motorEncoderValue = getNeoRotation();
+        return motorEncoderValue + encoderOffset;
     }
 
     public void zeroEncoders(){
         rotationMotor.setEncoder(0);
-        initialEncoderAngle = getRotationAbsolute();
+        encoderOffset = getRotationAbsolute();//-getNeoRotation();
+        rotationController.reset();
     }
 
     public static double angleDifference( double angle1, double angle2 )
@@ -169,10 +152,13 @@ public class SwerveModule {
         return diff < -180 ? diff + 360 : diff;
     }
 
-    // https://www.desmos.com/calculator/yn5megahcu
-    public static double calculateError(double angle, double target) {
-        double diff = target - angle;
-        return ((-diff - 180) % 360) - 180;
+    // FIXME: idk what im doing
+    public double getRotationMirrored() {
+        double rotation = this.getRotation();
+        if (rotation < 0) {
+            rotation = 180 - rotation;
+        }
+        return rotation;
     }
 
     public SwerveModuleState getState() {
@@ -204,7 +190,7 @@ public class SwerveModule {
         this.pDriveAngle = this.driveAngle;
         this.pRotationAngle = this.rotationAngle;
 
-        this.rotationAngle = this.getRotationAbsolute();
+        this.rotationAngle = this.getRotation();
         this.driveAngle = this.driveMotor.getPosition();
 
         double speed = (this.driveAngle - this.pDriveAngle);
@@ -224,6 +210,7 @@ public class SwerveModule {
 
     public void disable(){
         enabled = false;
+        rotationController.reset();
     }
     public void enable(){
         enabled = true;
