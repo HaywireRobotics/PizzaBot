@@ -3,7 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.util.Statics;
@@ -11,7 +11,7 @@ import frc.robot.util.Vector;
 
 
 
-public class DefaultDriveCommand extends CommandBase {
+public class DefaultDriveCommand extends Command {
     private final DrivetrainSubsystem m_subsystem;
     private final CommandXboxController controller;
 
@@ -54,7 +54,7 @@ public class DefaultDriveCommand extends CommandBase {
         leftY = leftVector.y;
         // System.out.println(leftVector.toString());
 
-        double mirrorField = DriverStation.getAlliance() == DriverStation.Alliance.Blue ? 1.0 : -1.0;
+        double mirrorField = DriverStation.getAlliance().get() == DriverStation.Alliance.Blue ? 1.0 : -1.0;
 
         m_subsystem.driveArcade(teleopSpeedMultiplier*leftX*mirrorField, teleopSpeedMultiplier*leftY*mirrorField, rightX);
       
