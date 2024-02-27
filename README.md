@@ -10,8 +10,8 @@ If your bot uses different types of components, then the code will need to be mo
 
 ## Getting Set Up
 Adapting the code to work with your robot is relatively simple.
-### 1. Set width and height
-The variables for the drivetrain's width and height need to be set to your robots dimensions, and can be found in `Constants.java`. Measure from the center of each swerve module.
+### 1. Set width and length
+The variables for the drivetrain's width and length need to be set to your robots dimensions, and can be found in `Constants.java`. Measure from the center of each swerve module.
 ```java
 public static final double DRIVETRAIN_TRACKWIDTH_METERS = 0.475;
 public static final double DRIVETRAIN_TRACKLENGTH_METERS = 0.475;
