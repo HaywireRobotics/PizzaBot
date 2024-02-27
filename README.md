@@ -32,3 +32,8 @@ If some modules seem reversed from what they ought to be, you can correct that w
 ```java
 public static final boolean FRONT_LEFT_REVERSE_DRIVE = true;
 ```
+### 4. Change `MAX_SPEED`
+Configure the maximum motor speed to something reasonable for your purposes. The codebase may have it set low for testing reasons.
+```java
+public static final int MAX_SPEED = 1000;
+```
